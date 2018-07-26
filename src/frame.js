@@ -24,7 +24,7 @@ const maskClass = css({
 })
 
 const maskVisibleClass = css({
-  display: 'block'
+  // display: 'block'
 })
 
 const containerClass = css({
@@ -160,12 +160,14 @@ export class Frame extends Component {
       mask: this.mask,
       frame: this.frame
     })
-
+    
     this._visibleRenderTimeout = setTimeout(() => {
       this.setState({
         isVisible: true
       })
     }, delay)
+    
+    document.body.addEventListener('click', this.clickOnBody, true);
   }
 
   componentWillUnmount() {
@@ -176,8 +178,15 @@ export class Frame extends Component {
       frame: this.frame
     })
 
+    document.body.removeEventListener('click', this.clickOnBody, true);
     delete window[FRAME_TOGGLE_FUNCTION]
     clearTimeout(this._visibleRenderTimeout)
+  }
+  
+  clickOnBody = (e) => {
+    if(e && e.target && e.target.matches && ! e.target.matches(`.${containerClass.toString()}`)){
+      this.onMaskClick()
+    }
   }
 
   onLoad = () => {
